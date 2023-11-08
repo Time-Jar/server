@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  server:
+    image: time-jar/server:latest
+    container_name: server
+    restart: unless-stopped
+    networks:
+      - db
+      - traefik-proxy
+    environment:
+      # Mongo
+      DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
+      # Server
+      ENVIRONMENT: "prod"
+      RUN_INTERVAL: 14400 # 4h in seconds
+      PORT: 6000
+      CONFIG_SERVER: ${CONFIG_SERVER}
+
+      # Datadog
+      DD_AGENT_HOST: ${DD_AGENT_HOST}
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-proxy # needed if you have multiple networks and no default
+      traefik.http.routers.server.rule: Host(`${DOMAIN}`) && PathPrefix(`/server/`)
+      traefik.http.routers.server.entrypoints: https
+      traefik.http.services.server.loadbalancer.server.port: 6000
+    depends_on:
+      - db
+
+  db:
+    image: docker.io/mongo:latest
+    container_name: products-db
+    restart: unless-stopped
+    networks:
+      - products-db
+    ports:
+      - 27017:27017
+    volumes:
+      - /etc/time-jar/docker-data/products-db:/data/db:rw
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${M_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${M_PASSWORD}
+
+  db-ui:
+    image: docker.io/mongo-express:latest
+    container_name: db-ui
+    restart: unless-stopped
+    networks:
+      - db
+      - traefik-proxy
+    environment:
+      ME_CONFIG_MONGODB_URL: ${DB_CONNECTION_STRING}
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-proxy # needed if you have multiple networks and no default
+      traefik.http.routers.db-ui.rule: Host(`db-ui.${DOMAIN}`)
+      traefik.http.routers.db-ui.entrypoints: https
+      traefik.http.services.db-ui.loadbalancer.server.port: 8081
+      traefik.http.routers.db-ui.middlewares: traefik-auth
+    depends_on:
+      - db
+
+networks:
+  db:
+    external: true
+  traefik-proxy:
+    external: true
