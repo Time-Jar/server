@@ -223,7 +223,7 @@ services:
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
     volumes:
-      - ./configs/storage:/var/lib/storage:z
+      - /mnt/data/containers/supabase/supabase-storage:/var/lib/storage:z
     healthcheck:
       test:
         [
@@ -257,7 +257,7 @@ services:
       IMGPROXY_USE_ETAG: "true"
       IMGPROXY_ENABLE_WEBP_DETECTION: ${SUPABASE_IMGPROXY_ENABLE_WEBP_DETECTION}
     volumes:
-      - ./configs/storage:/var/lib/storage:z
+      - /mnt/data/containers/supabase/supabase-storage:/var/lib/storage:z
     healthcheck:
       test: ["CMD", "imgproxy", "health"]
       timeout: 5s
@@ -383,7 +383,7 @@ services:
       # Must be superuser to alter reserved role
       - ./configs/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
       # PGDATA directory is persisted between restarts
-      - ./configs/db/data:/var/lib/postgresql/data:Z
+      - /mnt/data/containers/supabase/supabase-db:/var/lib/postgresql/data:Z
       # Changes required for Analytics support
       - ./configs/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
     command:
