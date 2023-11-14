@@ -11,8 +11,8 @@ services:
       STUDIO_PG_META_URL: http://supabase-meta:8080
       POSTGRES_PASSWORD: ${SUPABASE_POSTGRES_PASSWORD}
 
-      DEFAULT_ORGANIZATION_NAME: ${STUDIO_DEFAULT_ORGANIZATION}
-      DEFAULT_PROJECT_NAME: ${STUDIO_DEFAULT_PROJECT}
+      DEFAULT_ORGANIZATION_NAME: ${SUPABASE_STUDIO_DEFAULT_ORGANIZATION}
+      DEFAULT_PROJECT_NAME: ${SUPABASE_STUDIO_DEFAULT_PROJECT}
 
       SUPABASE_URL: http://supabase-kong:8000
       SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
@@ -107,10 +107,10 @@ services:
 
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${SUPABASE_ENABLE_EMAIL_SIGNUP}
       GOTRUE_MAILER_AUTOCONFIRM: ${SUPABASE_ENABLE_EMAIL_AUTOCONFIRM}
-      # GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true
+      GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true # commented by default
       # GOTRUE_SMTP_MAX_FREQUENCY: 1s
       GOTRUE_SMTP_ADMIN_EMAIL: ${ADMIN_EMAIL}
-      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_HOST: ${SMTP_SERVER}
       GOTRUE_SMTP_PORT: ${SMTP_PORT}
       GOTRUE_SMTP_USER: ${SMTP_USER}
       GOTRUE_SMTP_PASS: ${SMTP_PASSWORD}
@@ -398,7 +398,7 @@ services:
       timeout: 5s
       retries: 10
     depends_on:
-      vector:
+      supabase-vector:
         condition: service_healthy
 
   supabase-vector:
@@ -408,8 +408,8 @@ services:
     networks:
       - supabase-internal
     volumes:
-      - ./configs/logs/vector.yml:/etc/vector/vector.yml:ro
-      - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro
+      - ${DECRYPTED_DIR}/docker-compose/supabase/configs/logs/vector.yml:/etc/vector/vector.yml:ro
+      - ${SUPABASE_DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro
     command: ["--config", "etc/vector/vector.yml"]
     healthcheck:
       test:
@@ -419,7 +419,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://vector:9001/health",
+          "http://supabase-vector:9001/health",
         ]
       timeout: 5s
       interval: 5s
