@@ -48,9 +48,9 @@ services:
     networks:
       - traefik-proxy
       - supabase-internal
-    ports:
-      - 8000:8000/tcp
-      - 8443:8443/tcp
+    # ports:
+    #  - 8000:8000/tcp
+    #  - 8443:8443/tcp
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
