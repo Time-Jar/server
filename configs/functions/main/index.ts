@@ -3,8 +3,8 @@ import * as jose from 'https://deno.land/x/jose@v4.14.4/index.ts'
 
 console.log('main function started')
 
-const JWT_SECRET = Deno.env.get('JWT_SECRET')
-const VERIFY_JWT = Deno.env.get('VERIFY_JWT') === 'true'
+const JWT_SECRET = Deno.env.get('SUPABASE_JWT_SECRET')
+const VERIFY_JWT = Deno.env.get('SUPABASE_VERIFY_JWT') === 'true'
 
 function getAuthToken(req: Request) {
   const authHeader = req.headers.get('authorization')

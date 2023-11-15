@@ -48,9 +48,9 @@ services:
     networks:
       - traefik-proxy
       - supabase-internal
-    # ports:
-    #  - ${KONG_HTTP_PORT}:8000/tcp
-    #  - ${KONG_HTTPS_PORT}:8443/tcp
+    ports:
+      - 8000:8000/tcp
+      - 8443:8443/tcp
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
@@ -73,10 +73,10 @@ services:
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
     labels:
       traefik.enable: true
-      traefik.docker.network: traefik-proxy # needed if you have multiple networks and no default
-      traefik.http.routers.server.rule: Host(`supabase.${MAIN_DOMAIN}`)
-      traefik.http.routers.server.entrypoints: https
-      traefik.http.services.server.loadbalancer.server.port: 8000
+      traefik.docker.network: traefik-proxy
+      traefik.http.routers.supabase.rule: Host(`supabase.${MAIN_DOMAIN}`)
+      traefik.http.routers.supabase.entrypoints: https
+      traefik.http.services.supabase.loadbalancer.server.port: 8000
     depends_on:
       supabase-analytics:
         condition: service_healthy
@@ -376,12 +376,16 @@ services:
       POSTGRES_PASSWORD: ${SUPABASE_POSTGRES_PASSWORD}
       PGDATABASE: ${SUPABASE_POSTGRES_DB}
       POSTGRES_DB: ${SUPABASE_POSTGRES_DB}
+      JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      JWT_EXP: ${SUPABASE_JWT_EXPIRY}
     volumes:
       - ./configs/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
       - ./configs/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
       # Must be superuser to alter reserved role
       - ./configs/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
+      # Initialize the database settings with JWT_SECRET and JWT_EXP
+      - ./configs/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
       # PGDATA directory is persisted between restarts
       - /mnt/data/containers/supabase/supabase-db:/var/lib/postgresql/data:Z
       # Changes required for Analytics support
