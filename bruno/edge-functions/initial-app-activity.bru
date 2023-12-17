@@ -1,0 +1,11 @@
+meta {
+  name: initial-app-activity
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://supabase.{{MAIN_DOMAIN}}/functions/v1/initial-app-activity
+  body: json
+  auth: none
+}
