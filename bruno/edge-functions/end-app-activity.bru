@@ -1,0 +1,21 @@
+meta {
+  name: end-app-activity
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://supabase.{{MAIN_DOMAIN}}/functions/v1/end-app-activity
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": "f7427faa-c131-402a-9578-b742aaf3b5bd",
+    "acceptance": 2,
+    "should_be_blocked": true,
+    "action": 3,
+    "app_usage_time": 465
+  }
+}
