@@ -18,7 +18,7 @@ serve(async (request: Request) => {
 
   const validationError = validateInput(requestBody);
   if (validationError) {
-    return new Response(validationError, { status: 400 });
+    return new Response(`validation error: ${validationError}`, { status: 400 });
   }
 
   try {

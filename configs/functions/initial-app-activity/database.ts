@@ -9,7 +9,7 @@ export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, pack
         .single();
 
     if (reponse.error && reponse.error.message !== 'No rows found') {
-        throw reponse.error;
+        throw Error(`getAppName error: ${reponse.error}`);
     }
 
     if (!reponse.data) {
