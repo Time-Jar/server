@@ -13,8 +13,6 @@ serve(async (request: Request) => {
   }
 
   const requestBody = await request.json();
-  
-  // app_usage_time is seconds
 
   const validationError = validateInput(requestBody);
   if (validationError) {
@@ -22,7 +20,7 @@ serve(async (request: Request) => {
   }
 
   try {
-    const updateError = await updateLastAppUsage(supabase, requestBody.userId, requestBody.acceptance, requestBody.should_be_blocked, requestBody.action, requestBody.app_usage_time)
+    const updateError = await updateLastAppUsage(supabase, requestBody.userId, requestBody.acceptance, requestBody.should_be_blocked, requestBody.action, new Date(requestBody.eventTime))
     if (updateError) {
       throw Error(`updateLastAppUsage error: ${updateError}`);
     }

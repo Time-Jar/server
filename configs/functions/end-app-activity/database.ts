@@ -1,6 +1,6 @@
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
 
-export async function updateLastAppUsage(supabase: SupabaseClient, userId: string, acceptance: number, should_be_blocked: boolean, action: number, app_usage_time: number): Promise<string | null> {
+export async function updateLastAppUsage(supabase: SupabaseClient, userId: string, acceptance: number, shouldBeBlocked: boolean, action: number, eventTime: Date): Promise<string | null> {
   let result = await supabase
     .from('user_app_usage')
     .select('*')
@@ -16,6 +16,9 @@ export async function updateLastAppUsage(supabase: SupabaseClient, userId: strin
   if (result.data.should_be_blocked) {
     return 'The last app usage record is already complete and cannot be updated.';
   }
+
+  const should_be_blocked = shouldBeBlocked
+  const app_usage_time = Math.abs(new Date(eventTime.toLocaleTimeString()).getUTCSeconds() - new Date(result.data.time_of_day).getUTCSeconds())
 
   // Step 2: Update the record
   result = await supabase

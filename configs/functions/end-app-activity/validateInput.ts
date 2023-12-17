@@ -8,7 +8,7 @@ export function validateInput(input: any): string | null {
       return 'Invalid acceptance value';
     }
   
-    if (typeof input.should_be_blocked !== 'boolean') {
+    if (typeof input.shouldBeBlocked !== 'boolean') {
       return 'Invalid should_be_blocked value';
     }
   
@@ -16,8 +16,8 @@ export function validateInput(input: any): string | null {
       return 'Invalid action value';
     }
   
-    if (typeof input.app_usage_time !== 'number' || !Number.isInteger(input.app_usage_time) || input.app_usage_time < 0) {
-      return 'Invalid app_usage_time value';
+    if (typeof input.eventTime !== 'number' || input.eventTime < 0 || new Date(input.eventTime) > new Date()) {
+      return 'Invalid event time';
     }
   
     return null;
