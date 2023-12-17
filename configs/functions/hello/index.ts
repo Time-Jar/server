@@ -4,6 +4,7 @@
 
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts"
 
+// deno-lint-ignore require-await
 serve(async () => {
   return new Response(
     `"Hello from Edge Functions!"`,

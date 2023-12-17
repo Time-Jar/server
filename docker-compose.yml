@@ -46,10 +46,10 @@ services:
     container_name: supabase-kong
     restart: always
     networks:
-      - traefik-proxy
+      - reverse-proxy
       - supabase-internal
-    # ports:
-    #  - 8000:8000/tcp
+    #ports:
+    #  - 8000:8000/tcp # UI
     #  - 8443:8443/tcp
     environment:
       KONG_DATABASE: "off"
@@ -71,12 +71,6 @@ services:
       - ./configs/api/kong.yml:/home/kong/temp.yml:ro
     # https://unix.stackexchange.com/a/294837
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
-    labels:
-      traefik.enable: true
-      traefik.docker.network: traefik-proxy
-      traefik.http.routers.supabase.rule: Host(`supabase.${MAIN_DOMAIN}`)
-      traefik.http.routers.supabase.entrypoints: https
-      traefik.http.services.supabase.loadbalancer.server.port: 8000
     depends_on:
       supabase-analytics:
         condition: service_healthy
@@ -430,7 +424,7 @@ services:
       retries: 3
 
 networks:
-  traefik-proxy:
+  reverse-proxy:
     external: true
   supabase-internal:
     name: supabase-internal
