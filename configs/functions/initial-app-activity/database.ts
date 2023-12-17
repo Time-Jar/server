@@ -1,4 +1,4 @@
-import { SupabaseClient, PostgrestError } from "https://esm.sh/@supabase/supabase-js@1.33.1";
+import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
 
 export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, packageName: string): Promise<number> {
     // Insert or fetch app name
@@ -32,7 +32,7 @@ export async function insertAppUsage(supabase: SupabaseClient, appNameId: number
       // action: 'action-id-here', // on end
       location: locationId,
       weekday: eventTime.getDay(),
-      time_of_day: eventTime.toTimeString(),
+      time_of_day: eventTime.toLocaleTimeString("sl_SI"),
       // app_usage_time: 0, // on end
   };
 
