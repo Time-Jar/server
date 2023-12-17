@@ -1,4 +1,4 @@
-import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
+import { SupabaseClient, PostgrestError } from "https://esm.sh/@supabase/supabase-js@1.33.1";
 
 export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, packageName: string): Promise<number> {
     // Insert or fetch app name
@@ -8,7 +8,7 @@ export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, pack
         .eq('app_name', packageName)
         .single();
 
-    if (reponse.error && reponse.error.message !== 'No rows found') {
+    if (reponse.error && reponse.error.message !== 'JSON object requested, multiple (or no) rows returned') {
         throw Error(`getAppName error: ${reponse.error.message}`);
     }
 
