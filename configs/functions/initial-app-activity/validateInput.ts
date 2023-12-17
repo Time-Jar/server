@@ -1,9 +1,5 @@
 // deno-lint-ignore no-explicit-any
 export function validateInput(input: any): string | null {
-    if (!input.userId || !input.packageName || !input.eventTime || !input.locationId) {
-      return 'Missing required parameters';
-    }
-  
     if (typeof input.packageName !== 'string' || input.packageName.trim() === '') {
       return 'Invalid package name';
     }

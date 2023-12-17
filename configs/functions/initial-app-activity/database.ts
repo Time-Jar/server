@@ -22,6 +22,16 @@ export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, pack
     return reponse.data.id
 }
 
+function getWeekday(date: Date): number {
+  let day = date.getDay();
+  // Adjust days so Monday = 1, Tuesday = 2, ..., Sunday = 7
+  if (day === 0) { // If it's Sunday
+    day = 7;
+  }
+  return day;
+}
+
+
 export async function insertAppUsage(supabase: SupabaseClient, appNameId: number, userId: string, locationId: number, eventTime: Date) {
   // Insert data into user_app_usage
   const userAppUsage = {
@@ -31,8 +41,8 @@ export async function insertAppUsage(supabase: SupabaseClient, appNameId: number
       // should_be_blocked: false, // on end
       // action: 'action-id-here', // on end
       location: locationId,
-      weekday: eventTime.getDay(),
-      time_of_day: eventTime.toLocaleTimeString("sl_SI"),
+      weekday: getWeekday(eventTime),
+      time_of_day: eventTime.toLocaleTimeString(), // They are saved in UTC format on the server
       // app_usage_time: 0, // on end
   };
 
