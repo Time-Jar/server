@@ -8,7 +8,7 @@ export function validateInput(input: any): string | null {
       return 'Invalid acceptance value';
     }
   
-    if (typeof input.shouldBeBlocked !== 'boolean') {
+    if (typeof input.shouldBeBlocked !== 'number') {
       return 'Invalid should_be_blocked value';
     }
   

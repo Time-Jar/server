@@ -18,15 +18,19 @@ serve(async (request: Request) => {
 
   const validationError = validateInput(requestBody);
   if (validationError) {
+    // console.debug("initial-app-activity validationError", validationError, requestBody);
+    
     return new Response(`validation error: ${validationError}`, { status: 400 });
   }
+
+  var shouldBlock = false
 
   try {
     const appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)
 
     await insertAppUsage(supabase, appNameId, requestBody.userId, requestBody.locationId, new Date(requestBody.eventTime))
 
-    return new Response('Data inserted successfully', { status: 200 });
+    return new Response(JSON.stringify({message: 'Data inserted successfully', shouldBlock: shouldBlock}), { status: 200 });
   } catch (error) {
     return new Response(`Error: ${error.message || 'Unknown error'}`, { status: 500 });
   }

@@ -18,9 +18,11 @@ export async function updateLastAppUsage(supabase: SupabaseClient, userId: strin
   }
 
   const should_be_blocked = shouldBeBlocked
-  const app_usage_time = Math.abs(new Date(eventTime.toLocaleTimeString()).getUTCSeconds() - new Date(result.data.time_of_day).getUTCSeconds())
+  const app_usage_time = getAbsDifferenceInSeconds(eventTime, result.data.time_of_day )
 
-  // Step 2: Update the record
+  // console.debug("updateLastAppUsage", "acceptance:", acceptance, "should_be_blocked:", should_be_blocked, "action:", action, "app_usage_time:", app_usage_time)
+
+  // Update the record
   result = await supabase
     .from('user_app_usage')
     .update({ acceptance, should_be_blocked, action, app_usage_time })
@@ -30,4 +32,25 @@ export async function updateLastAppUsage(supabase: SupabaseClient, userId: strin
 
   return null;
 }
-  
+
+function getSecondsSinceMidnight(time) {
+  return time.getHours() * 3600 + time.getMinutes() * 60 + time.getSeconds();
+}
+
+function getAbsDifferenceInSeconds(eventTime, timeOfDay) {
+  // Extract hours, minutes, and seconds from the time string
+  const [hours, minutes, seconds] = timeOfDay.split(':').map(Number);
+
+  // Create a Date object for today at the time_of_day
+  const comparisonTime = new Date(eventTime);
+  comparisonTime.setHours(hours, minutes, seconds);
+
+  // Calculate total seconds from midnight for both times
+  const eventTimeSeconds = getSecondsSinceMidnight(eventTime);
+  const comparisonTimeSeconds = getSecondsSinceMidnight(comparisonTime);
+
+  // Calculate the absolute difference in seconds
+  const differenceInSeconds = Math.abs(eventTimeSeconds - comparisonTimeSeconds);
+
+  return differenceInSeconds;
+}

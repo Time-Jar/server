@@ -33,6 +33,9 @@ function getWeekday(date: Date): number {
 
 
 export async function insertAppUsage(supabase: SupabaseClient, appNameId: number, userId: string, locationId: number, eventTime: Date) {
+
+  // console.debug("appNameId:", appNameId, "userId:", userId, "locationId:", locationId, "eventTime", eventTime)
+
   // Insert data into user_app_usage
   const userAppUsage = {
       app_name: appNameId,
