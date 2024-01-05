@@ -23,7 +23,7 @@ serve(async (request: Request) => {
     return new Response(`validation error: ${validationError}`, { status: 400 });
   }
 
-  var shouldBlock = false
+  const shouldBlock = false
 
   try {
     const appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)

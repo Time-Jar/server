@@ -13,7 +13,7 @@ export async function updateLastAppUsage(supabase: SupabaseClient, userId: strin
   if (!result.data) return 'No previous app usage record found';
 
   // Check if the last record is already complete
-  if (result.data.should_be_blocked) {
+  if (result.data.should_be_blocked != null) {
     return 'The last app usage record is already complete and cannot be updated.';
   }
 
@@ -33,11 +33,11 @@ export async function updateLastAppUsage(supabase: SupabaseClient, userId: strin
   return null;
 }
 
-function getSecondsSinceMidnight(time) {
+function getSecondsSinceMidnight(time: Date) {
   return time.getHours() * 3600 + time.getMinutes() * 60 + time.getSeconds();
 }
 
-function getAbsDifferenceInSeconds(eventTime, timeOfDay) {
+function getAbsDifferenceInSeconds(eventTime: Date, timeOfDay: string) {
   // Extract hours, minutes, and seconds from the time string
   const [hours, minutes, seconds] = timeOfDay.split(':').map(Number);
 
