@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
-import { getAppNameIdOrInsertAppName, insertAppUsage } from "./database.ts"
+import { getAppNameIdOrInsertAppName, insertAppUsage, getWeekday } from "./database.ts"
 import { validateInput } from "./validateInput.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? "";
@@ -23,12 +23,24 @@ serve(async (request: Request) => {
     return new Response(`validation error: ${validationError}`, { status: 400 });
   }
 
-  const shouldBlock = false
+  let shouldBlock = false
+  let weekday
+  let timeOfDay
+  let appNameId
 
   try {
-    const appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)
+    const eventTime = new Date(requestBody.eventTime)
+  
+    weekday = getWeekday(eventTime)
+    timeOfDay = eventTime.toLocaleTimeString()
+    appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)
 
-    await insertAppUsage(supabase, appNameId, requestBody.userId, requestBody.locationId, new Date(requestBody.eventTime))
+  } catch (error) {
+    return new Response(`Error: ${error.message || 'Unknown error'}`, { status: 412 });
+  }
+
+  try {
+    await insertAppUsage(supabase, appNameId, requestBody.userId, requestBody.locationId, weekday, timeOfDay)
 
     return new Response(JSON.stringify({message: 'Data inserted successfully', shouldBlock: shouldBlock}), { status: 200 });
   } catch (error) {

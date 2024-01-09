@@ -1,6 +1,6 @@
 import { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
 
-export async function insertAppUsage(supabase: SupabaseClient, appNameId: number, userId: string, locationId: number, eventTime: Date) {
+export async function insertAppUsage(supabase: SupabaseClient, appNameId: number, userId: string, locationId: number, weekday: number,  timeOfDay: string) {
 
   // console.debug("appNameId:", appNameId, "userId:", userId, "locationId:", locationId, "eventTime", eventTime)
 
@@ -35,8 +35,8 @@ export async function insertAppUsage(supabase: SupabaseClient, appNameId: number
       // should_be_blocked: false, // on end
       // action: 'action-id-here', // on end
       location: locationId,
-      weekday: getWeekday(eventTime),
-      time_of_day: eventTime.toLocaleTimeString(), // They are saved in UTC format on the server
+      weekday: weekday,
+      time_of_day: timeOfDay, // They are saved in UTC format on the server
       // app_usage_time: 0, // on end
   };
 
@@ -71,11 +71,13 @@ export async function getAppNameIdOrInsertAppName(supabase: SupabaseClient, pack
   return reponse.data.id
 }
 
-function getWeekday(date: Date): number {
-let day = date.getDay();
-// Adjust days so Monday = 1, Tuesday = 2, ..., Sunday = 7
-if (day === 0) { // If it's Sunday
-  day = 7;
-}
-return day;
+export function getWeekday(date: Date): number {
+  let day = date.getDay();
+  
+  // Adjust days so Monday = 1, Tuesday = 2, ..., Sunday = 7
+  if (day === 0) { // If it's Sunday
+    day = 7;
+  }
+
+  return day;
 }
