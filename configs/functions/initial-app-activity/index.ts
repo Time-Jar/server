@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.177.1/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@1.33.1";
 import { getAppNameIdOrInsertAppName, insertAppUsage, getWeekday } from "./database.ts"
 import { validateInput } from "./validateInput.ts";
+import { tensorFlowApi } from "./tensorflow-api.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? "";
 const supabaseAnonKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? "";
@@ -34,6 +35,8 @@ serve(async (request: Request) => {
     weekday = getWeekday(eventTime)
     timeOfDay = eventTime.toLocaleTimeString()
     appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)
+
+    // shouldBlock = await tensorFlowApi(requestBody.userId)
 
   } catch (error) {
     return new Response(`Error: ${error.message || 'Unknown error'}`, { status: 412 });
