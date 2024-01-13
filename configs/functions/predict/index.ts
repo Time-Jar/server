@@ -33,9 +33,11 @@ serve(async (request: Request) => {
     const timeOfDay = startTime.toLocaleTimeString()
     const appNameId = await getAppNameIdOrInsertAppName(supabase, requestBody.packageName)
     
-    // shouldBlock = await tensorFlowApi(requestBody.userId, appNameId, weekday, timeOfDay, requestBody.locationId)
+    shouldBlock = await tensorFlowApi(requestBody.userId, appNameId, weekday, timeOfDay, requestBody.locationId)
 
-    return new Response(JSON.stringify({message: 'Data inserted successfully', shouldBlock: shouldBlock}), { status: 200 });
+    console.debug(requestBody.userId, "shouldBlock:", shouldBlock)
+
+    return new Response(JSON.stringify({message: 'Prediction done', shouldBlock: shouldBlock}), { status: 200 });
   } catch (error) {
     return new Response(`Error: ${error.message || 'Unknown error'}`, { status: 500 });
   }
