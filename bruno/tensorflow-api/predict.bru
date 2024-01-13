@@ -1,0 +1,21 @@
+meta {
+  name: predict
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:5001/predict
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": "f421d429-c403-4865-afae-3ea0ee9a7bd7",
+    "appNameId": 1,
+    "weekday": 3,
+    "timeOfDay": "11:20:35",
+    "locationId": 1
+  }
+}
