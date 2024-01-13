@@ -1,10 +1,18 @@
 
-export async function tensorFlowApi(userId: string): Promise<boolean> {
+export async function tensorFlowApi(userId: string, appNameId: number, weekday: number, timeOfDay: string, locationId: number): Promise<boolean> {
     
     const response = await fetch("supabase-tensorflow-api:5000", 
         { 
             method: 'POST', 
-            body: JSON.stringify({ "userId": userId })
+            body: JSON.stringify(
+                { 
+                    "userId": userId,
+                    "appNameId": appNameId,
+                    "weekday": weekday,
+                    "timeOfDay": timeOfDay,
+                    "locationId": locationId
+                }
+            )
         }
     )
 
